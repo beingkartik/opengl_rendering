@@ -115,7 +115,70 @@ def keyPressed(*args):
     print(args[0])
     # if args[0] == '\x1b':
     #     sys.exit()
+
+def react_to_event(event,t_axis,r_axis):
+    if event.type == 2:
+        
+        dist = 0.01
+        r_axis1,r_axis2,r_axis3 = r_axis
+        t_axis1,t_axis2,t_axis3 = t_axis
+        t_axis1,t_axis2,t_axis3 = t_axis1*dist,t_axis2*dist,t_axis3 *dist
+        if event.unicode == '\x1b':
+            pygame.quit()
+        
+        elif event.key == 273:
+            glTranslatef(t_axis1,t_axis2,t_axis3)
+        elif event.key == 274:
+            glTranslatef(-t_axis1,-t_axis2,-t_axis3)
+       
+        elif event.key == 275:
+            glRotatef(1,r_axis1,r_axis2,r_axis3)
+        elif event.key == 276:
+            glRotatef(-1,r_axis1,r_axis2,r_axis3)
+        
+        #1,2,3 -- choose rotation axis
+        elif event.key in [49,257]:
+            r_axis[0] = 1
+            r_axis[1] = 0
+            r_axis[2] = 0
+            print("Moving x axis")
+        elif event.key in [50,258]:
+            r_axis[0] = 0
+            r_axis[1] = 1
+            r_axis[2] = 0
+            print("Moving y axis")
+        elif event.key in [51,259]:
+            r_axis[0] = 0
+            r_axis[1] = 0
+            r_axis[2] = 1
+            print("Moving z axis")
+            
+            
+        #4,5,6 -- choose translation axis
+        elif event.key in [52,260]:
+            t_axis[0] = 1
+            t_axis[1] = 0
+            t_axis[2] = 0
+            print("Rotating x axis")
+        elif event.key in [53,261]:
+            t_axis[0] = 0
+            t_axis[1] = 1
+            t_axis[2] = 0
+            print("Rotating y axis")
+        elif event.key in [54,262]:
+            t_axis[0] = 0
+            t_axis[1] = 0
+            t_axis[2] = 1
+            print("Rotating z axis")
+            
+        elif event.key == 115:
+            print("Extrinsic Matrix")
+            model1 = glGetDoublev(GL_MODELVIEW_MATRIX)
+            print(model1.transpose()) #reminder:openGL matrices are in column major order
     
+        else:
+            print(event.key)
+        
     
 def main():
     pygame.init()
@@ -127,13 +190,13 @@ def main():
     # glutMainLoop()
     z = 0
     pygame.time.wait(10)       
-    
+    r_axis = [1,0,0]
+    t_axis = [1,0,0]
     while True:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-        glRotatef(2,0,1,0)
+            react_to_event(event,r_axis,t_axis)
+       
+        # glRotatef(2,0,1,0)
 #        glTranslate(-0.01, 0,0)
         # z = z-0.0005
         # print(z)
@@ -145,7 +208,7 @@ def main():
         #       0,0,1) 
         draw_cube_faces()
         
-        pygame.time.wait(100)  
+        pygame.time.wait(50)  
         # print(glGetDoublev(GL_MODELVIEW_MATRIX).transpose())
 
 if __name__ == '__main__':        
